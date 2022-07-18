@@ -32,4 +32,6 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
+    Route::get('users', [App\Http\Controllers\UserController::class, 'getAllUsers'])->name('users');
 });
