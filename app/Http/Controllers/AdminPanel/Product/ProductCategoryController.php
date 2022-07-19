@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Controllersc\AdminPanel\Product;
+namespace App\Http\Controllers\AdminPanel\Product;
 
 use Illuminate\Http\Request;
 use App\Models\ProductCategory;
 use App\Models\Product;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\Controller;
 
 class ProductCategoryController extends Controller
 {
@@ -24,9 +27,12 @@ class ProductCategoryController extends Controller
             'productCategoryName' => $fields['productCategoryName']
         ]);
 
-        return [
-            'message'=> 'Product category created successfully',
-        ];
+        session()->flash('flash.message', 'Product category created successfully');
+        // session()->flash('flash.bannerStyle', 'success');
+
+        return redirect('/manageProductCategory')->with([
+            'data' => 'Product category created successfully'
+        ]);
     }
 
     public function getProductCategory(Request $request){
@@ -39,7 +45,10 @@ class ProductCategoryController extends Controller
 
         $productCategory = ProductCategory::get();
 
-        return response($productCategory, 200);
+        return Inertia::render(
+            'Product/ManageProductCategory', [
+                'productCategory' => $productCategory
+            ]);
     }
 
     public function updateProductCategory(Request $request){
@@ -60,12 +69,12 @@ class ProductCategoryController extends Controller
         $productCategory->productCategoryName = $fields['productCategoryName'];
         $productCategory->save();
         
-        return [
-            'message'=> 'Product category updated',
-        ];
+        session()->flash('flash.message', 'Product category updated');
+
+        return redirect('/manageProductCategory');
     }
 
-    public function deleteProductCategory(Request $request){
+    public function deleteProductCategory(Request $request, $productCategoryID){
 
         if($request->user()->lockStatus == 1){
             return response([
@@ -73,22 +82,21 @@ class ProductCategoryController extends Controller
             ], 401);
         }
 
-        $productCategoryID = $request->productCategoryID;
-
         $product = Product::where('productCategoryID', $productCategoryID)->get();
 
         if(count($product) > 0){
-            return response(
-                [
-                    'message'=> 'Cannot delete. Some product is linked to this category',
-                ], 201
-            );
+
+            session()->flash('flash.banner', 'Cannot delete. Some product is linked to this category');
+            session()->flash('flash.bannerStyle', 'danger');
+
+            return redirect('/manageProductCategory');
+
         }else{
             ProductCategory::where('id', $productCategoryID)->delete();
 
-            return [
-                'message'=> 'Product category deleted successfully',
-            ];
+            session()->flash('flash.message', 'Product category deleted successfully');
+
+            return redirect('/manageProductCategory');
         }
     }
 }

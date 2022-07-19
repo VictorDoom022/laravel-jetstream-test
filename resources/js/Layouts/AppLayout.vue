@@ -85,7 +85,7 @@ const logout = () => {
                             </a>
                             <ul class="p-2">
                                 <li>
-                                    <a>Manage Product Category</a>
+                                    <Link :href="route('manageProductCategory')">Manage Product Category</Link>
                                 </li>
                                 <li><a>Submenu 2</a></li>
                             </ul>
@@ -169,9 +169,9 @@ const logout = () => {
                                 </li>
                                 <li>
                                     <form method="POST" @submit.prevent="logout">
-                                        <Link as="button">
+                                        <button type="submit" as="button">
                                             Log Out
-                                        </Link>
+                                        </button>
                                     </form>
                                 </li>
                             </ul>
