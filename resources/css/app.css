@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ck-editor__editable {
+    min-height: 200px;
+    color: black;
+}
+
+.ck.ck-content ul,
+.ck.ck-content ul li{
+  list-style-type: inherit;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.ck.ck-content ol,
+.ck.ck-content ol li{
+  list-style-type: number;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.ck.ck-content ul {
+  padding-left: 40px;
+}
+
+.ck.ck-content ol {
+  padding-left: 40px;
+}
+
+.ck.ck-content h2 { 
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.ck.ck-content h3 { 
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.ck.ck-content h4 { 
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.ck.ck-content p { 
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.ck.ck-content table tbody tr td span { 
+    font-weight: 400;
+    font-size: 14px;
+}
