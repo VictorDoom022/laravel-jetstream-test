@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Views;
 
 use Illuminate\Http\Request;
 use App\Models\Doctor;
