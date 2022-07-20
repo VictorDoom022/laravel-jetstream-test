@@ -5,6 +5,9 @@ namespace App\Http\Controllers\AdminPanel;
 use Illuminate\Http\Request;
 use App\Models\Banner;
 use Illuminate\Support\Facades\File; 
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\Controller;
 
 class BannerController extends Controller
 {
@@ -38,13 +41,13 @@ class BannerController extends Controller
                 'bannerPosition' => $newBannerPosition,
             ]);
 
-            return [
-                'message'=> 'Banner uploaded successfully',
-            ];
+            session()->flash('flash.message', 'Banner uploaded successfully');
+
+            return redirect('/manageBanner');
         }else{
-            return [
-                'message'=> 'No file uploaded',
-            ];
+            session()->flash('flash.message', 'No file uploaded');
+
+            return redirect('/manageBanner');
         }
     }
 
@@ -57,7 +60,10 @@ class BannerController extends Controller
 
         $banner = Banner::orderBy('bannerPosition', 'asc')->get();
 
-        return response($banner, 200);
+        return Inertia::render(
+            'Banner/ManageBanner', [
+                'banners' => $banner,
+            ]);
     }
 
     public function updateBannerPosition(Request $request){
@@ -79,9 +85,9 @@ class BannerController extends Controller
             ]);
         }
 
-        return [
-            'message'=> 'Banner position updated',
-        ];
+        session()->flash('flash.message', 'Banner position updated');
+
+        return redirect('/manageBanner');
     }
 
     public function deleteBanner(Request $request){

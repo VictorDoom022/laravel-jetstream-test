@@ -47,6 +47,11 @@ const logout = () => {
                                     Dashboard
                                 </Link>
                             </li>
+                            <li>
+                                <Link :href="route('manageBanner')" :active="route().current('users')">
+                                    Banner
+                                </Link>
+                            </li>
                             <li tabindex="0">
                                 <a class="justify-between">
                                     Product
@@ -78,6 +83,11 @@ const logout = () => {
                         <li>
                             <Link :href="route('users')" :active="route().current('users')">
                                 Users
+                            </Link>
+                        </li>
+                        <li>
+                            <Link :href="route('manageBanner')" :active="route().current('users')">
+                                Banner
                             </Link>
                         </li>
                         <li tabindex="0">

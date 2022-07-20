@@ -6,6 +6,7 @@ use Inertia\Inertia;
 
 use App\Http\Controllers\AdminPanel\Product\ProductCategoryController;
 use App\Http\Controllers\AdminPanel\Product\ProductController;
+use App\Http\Controllers\AdminPanel\BannerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,5 +53,12 @@ Route::middleware([
     Route::delete('/deleteProduct/{productID}', [ProductController::class, 'deleteProduct'])->name('deleteProduct');
     Route::get('/editProduct/{productID}', [ProductController::class, 'getEditProductPageData'])->name('editProduct');
     Route::post('/editProduct/{productID}', [ProductController::class, 'editProduct'])->name('editProduct.edit');
+
+    Route::get('/manageBanner', [BannerController::class, 'getBanners'])->name('manageBanner');
+    Route::get('/addBanner', function () {
+        return Inertia::render('Banner/AddBanner');
+    })->name('addBanner');
+    Route::post('/addBanner', [BannerController::class, 'uploadBanner'])->name('addBanner.add');
+    Route::post('/updateBannerPosition', [BannerController::class, 'updateBannerPosition'])->name('updateBannerPosition');
 
 });

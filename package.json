@@ -26,6 +26,7 @@
         "@heroicons/vue": "^1.0.6",
         "daisyui": "^2.19.0",
         "moment": "^2.29.4",
+        "vue-draggable-next": "^2.1.1",
         "vue-sweetalert2": "^5.0.5"
     }
 }
