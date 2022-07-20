@@ -11,13 +11,17 @@ import VueSweetalert2 from 'vue-sweetalert2';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
+const baseUrl = "http://192.168.0.181:8000";
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, app, props, plugin }) {
-        return createApp({ render: () => h(app, props) })
-            .use(plugin)
+        const VueApp = createApp({ render: () => h(app, props) })
+
+        VueApp.config.globalProperties.$baseUrl = baseUrl;
+
+        VueApp.use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(VueSweetalert2)
             .use(CKEditor)

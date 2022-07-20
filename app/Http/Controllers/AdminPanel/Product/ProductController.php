@@ -7,6 +7,9 @@ use App\Models\Product;
 use App\Models\Service;
 use App\Models\ProductCategory;
 use Illuminate\Support\Facades\File;
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
@@ -45,10 +48,9 @@ class ProductController extends Controller
             $product->save();
         }
 
-        return [
-            'message' => 'Product added successfully'
-        ];
+        session()->flash('flash.message', 'Product added successfully');
 
+        return redirect('/manageProduct');
     }
 
     public function getProducts(Request $request){
@@ -66,10 +68,13 @@ class ProductController extends Controller
             'product_categories.productCategoryName'
         ]);
 
-        return response($product, 200);
+        return Inertia::render(
+            'Product/ManageProduct', [
+                'product' => $product,
+            ]);
     }
 
-    public function deleteProducts(Request $request){
+    public function getAddProductPageData(Request $request){
 
         if($request->user()->lockStatus == 1){
             return response([
@@ -77,7 +82,21 @@ class ProductController extends Controller
             ], 401);
         }
 
-        $productID = $request->productID;
+        $productCategory = ProductCategory::get();
+
+        return Inertia::render(
+            'Product/AddProduct', [
+                'productCategory' => $productCategory
+            ]);
+    }
+
+    public function deleteProduct(Request $request, $productID){
+
+        if($request->user()->lockStatus == 1){
+            return response([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
 
         $product = Product::where('id', $productID)->first();
         if($product->productImageSrc != null){
@@ -87,20 +106,18 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return [
-            'message'=> 'Product deleted successfully',
-        ];
+        session()->flash('flash.message', 'Product deleted successfully');
+
+        return redirect('/manageProduct');
     }
 
-    public function getEditProductFormDataByProductID(Request $request){
+    public function getEditProductPageData(Request $request, $productID){
 
         if($request->user()->lockStatus == 1){
             return response([
                 'message' => 'Unauthorized'
             ], 401);
         }
-
-        $productID = $request->productID;
 
         $product = Product::where('products.id', $productID)
             ->leftJoin("product_categories", "product_categories.id", "=", "products.productCategoryID")
@@ -110,14 +127,15 @@ class ProductController extends Controller
             ]);
 
         $productCategory = ProductCategory::get();
-
-        return [
-            "product" => $product,
-            "productCategory" => $productCategory,
-        ];
+        
+        return Inertia::render(
+            'Product/EditProduct', [
+                "product" => $product,
+                "productCategory" => $productCategory,
+            ]);
     }
 
-    public function editProduct(Request $request){
+    public function editProduct(Request $request, $productID){
 
         if($request->user()->lockStatus == 1){
             return response([
@@ -125,7 +143,6 @@ class ProductController extends Controller
             ], 401);
         }
 
-        $productID = $request->productID;
         $productCategoryID = $request->productCategoryID;
         $productFullDetails = $request->productFullDetails;
 
@@ -165,8 +182,8 @@ class ProductController extends Controller
         }
         $product->save();
 
-        return [
-            'message'=> 'Product edited successfully',
-        ];
+        session()->flash('flash.message', 'Product edited successfully');
+
+        return redirect('/manageProduct');
     }
 }

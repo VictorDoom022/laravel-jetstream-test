@@ -1,0 +1,124 @@
+<script setup> 
+import AppLayout from '@/Layouts/AppLayout.vue';
+import { Link } from '@inertiajs/inertia-vue3';
+</script>
+
+<template>
+    <AppLayout title="Edit Product">
+        <template #header>
+            <div class="flex justify-between flex-wrap md:flex-nowwrap items-center">
+                <div class="flex">
+                    <Link :href="route('manageProduct')">
+                        <ChevronLeftIcon class="h-7 w-7 pb-1 cursor-pointer"/>
+                    </Link>
+                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit Product</h2>
+                </div>
+            </div>
+        </template>
+
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg overflow-x-auto p-3">
+                    <form @submit.prevent="addProduct" class="card pt-2 form-control">
+                        <label class="label"><span class="label-text text-black">Name <span class="text-red-500">*</span></span></label>
+                        <input v-model="form.productName" type="text" class="input input-md input-bordered w-full" required>
+                        
+                        <label class="label"><span class="label-text text-black">Category <span class="text-red-500">*</span></span></label>
+                        <select v-model="form.productCategoryID" class="select select-bordered w-full" required>
+                            <option v-for="category in productCategory" :key="category.id" :value="category.id">
+                                {{ category.productCategoryName }}
+                            </option>
+                        </select>
+                        
+                        <label class="label"><span class="label-text text-black">Short Description <span class="text-red-500">*</span></span></label>
+                        <input type="text" v-model="form.productShortDesc" class="input input-md input-bordered w-full" required>
+                        
+                        <label class="label"><span class="label-text text-black">Full Details</span></label>
+                        <ckeditor class="text-xs" v-model="form.productFullDetails" :editor="editor"></ckeditor>
+
+                        <label class="label"><span class="label-text text-black">Product Image <span class="text-red-500">*</span></span></label>
+                        <div class="flex" v-if="!checkIsFile">
+                            <div class="flex-initial w-70">
+                                <img :src="`${$baseUrl}/${form.productImageSrc}`">
+                            </div>
+                            <div class="flex-initial w-26 align-middle">
+                                <button @click="removeProductImage()" type="button" class="btn btn-sm bg-red-500 ml-1 border-none">Remove</button>
+                            </div>
+                        </div>
+                        <DragDropImage v-if="checkIsFile" @changed="handleProductImage" class="text-black" :max="1" :isRequired="true" clearAll="Clear All" maxError="Maximum one file only"/>
+                        
+                        <br>
+                        <button class="btn bg-green-500 border-none mt-3">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </AppLayout>
+</template>
+
+<script>
+import { ChevronLeftIcon } from '@heroicons/vue/outline'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+import DragDropImage from '../../components/DragDropImage.vue'
+
+export default {
+    props: ['product', 'productCategory'],
+    components: { ChevronLeftIcon, DragDropImage },
+    data(){
+        return {
+            editor : ClassicEditor,
+            form: this.$inertia.form({
+                productName: '',
+                productCategoryID: '',
+                productShortDesc: '',
+                productFullDetails: '',
+                productImageSrc: [],
+            }),
+        }
+    },
+    mounted(){
+        this.form.productName = this.product.productName
+        this.form.productCategoryID = this.product.productCategoryID
+        this.form.productShortDesc = this.product.productShortDesc
+        this.form.productFullDetails = this.product.productFullDetails == null ? '' : this.product.productFullDetails
+        this.form.productImageSrc = this.product.productImageSrc
+    },
+    methods: {
+        handleProductImage(files){
+            this.form.productImageSrc = files[0]
+        },
+        removeProductImage(){
+            this.form.productImageSrc = ''
+        },
+        addProduct(){
+            this.form.post(this.route('editProduct.edit', {'productID' : this.product.id} ), {
+                forceFormData: true,
+                onSuccess: (response) => {
+                    this.$swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        icon:  'success',
+                        title: response.props.jetstream.flash.message
+                    })
+                }
+            })
+        },
+    },
+    computed: {
+        checkIsFile(){
+            if((this.form.productImageSrc instanceof File) || this.form.productImageSrc == '' || this.form.productImageSrc == null){ // show dragDropImage when the value is a file or null or empty
+                return true
+            }else{ // of none of those condition meet, means the variable contains an url in server
+                return false
+            }
+        },
+    }
+}
+</script>
+
+<style>
+
+</style>

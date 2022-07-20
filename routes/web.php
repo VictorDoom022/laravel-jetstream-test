@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\AdminPanel\Product\ProductCategoryController;
+use App\Http\Controllers\AdminPanel\Product\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,5 +45,12 @@ Route::middleware([
     Route::post('/addProductCategory', [ProductCategoryController::class, 'addProductCategory'])->name('addProductCategory.add');
     Route::delete('/deleteProductCategory/{productCategoryID}', [ProductCategoryController::class, 'deleteProductCategory'])->name('deleteProductCategory');
     Route::post('/updateProductCategory', [ProductCategoryController::class, 'updateProductCategory'])->name('updateProductCategory');
+
+    Route::get('/manageProduct', [ProductController::class, 'getProducts'])->name('manageProduct');
+    Route::get('/addProduct', [ProductController::class, 'getAddProductPageData'])->name('addProduct');
+    Route::post('/addProduct', [ProductController::class, 'addProduct'])->name('addProduct.add');
+    Route::delete('/deleteProduct/{productID}', [ProductController::class, 'deleteProduct'])->name('deleteProduct');
+    Route::get('/editProduct/{productID}', [ProductController::class, 'getEditProductPageData'])->name('editProduct');
+    Route::post('/editProduct/{productID}', [ProductController::class, 'editProduct'])->name('editProduct.edit');
 
 });
